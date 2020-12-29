@@ -1,0 +1,39 @@
+[
+    {
+        "name": "name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "parent",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "resourceName",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "state",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "category",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "createTime",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "bq-datetime"
+    },
+    {
+        "name": "eventTime",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "bq-datetime"
+    }
+]

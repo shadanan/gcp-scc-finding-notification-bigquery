@@ -1,0 +1,11 @@
+# Visual Studio Code Config
+.vscode
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Environments
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
