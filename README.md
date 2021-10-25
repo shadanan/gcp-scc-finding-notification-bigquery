@@ -1,6 +1,6 @@
 # Replicating SCC Findings to BigQuery
 
-This guide will help you configure a GCP cloud function to replicate Security Command 
+This guide will help you configure a GCP cloud function to replicate Security Command
 Center findings to BigQuery.
 
 ## Setup
@@ -11,16 +11,16 @@ Center findings to BigQuery.
     be created.
 
     ```console
-    $ export ORG_ID=<your org id>
-    $ export PROJECT_ID=<your project id>
-    $ gcloud config set project $PROJECT_ID
+    export ORG_ID=<your org id>
+    export PROJECT_ID=<your project id>
+    gcloud config set project $PROJECT_ID
     ```
 
 1.  Create the service account.
 
     ```console
-    $ export SERVICE_ACCOUNT=scc-findings-to-bigquery-sa
-    $ gcloud iam service-accounts create $SERVICE_ACCOUNT \
+    export SERVICE_ACCOUNT=scc-findings-to-bigquery-sa
+    gcloud iam service-accounts create $SERVICE_ACCOUNT \
       --display-name "Service Account for Replicating SCC Findings to BigQuery" \
       --project $PROJECT_ID
     ```
@@ -28,10 +28,10 @@ Center findings to BigQuery.
 1.  Grant the service account BigQuery Data Owner and Job User on the project.
 
     ```console
-    $ gcloud projects add-iam-policy-binding $PROJECT_ID \
+    gcloud projects add-iam-policy-binding $PROJECT_ID \
       --member="serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
       --role='roles/bigquery.jobUser'
-    $ gcloud projects add-iam-policy-binding $PROJECT_ID \
+    gcloud projects add-iam-policy-binding $PROJECT_ID \
       --member="serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
       --role='roles/bigquery.dataOwner'
     ```
@@ -39,7 +39,7 @@ Center findings to BigQuery.
 1.  Grant the service account Security Center Admin on the org.
 
     ```console
-    $ gcloud organizations add-iam-policy-binding $ORG_ID \
+    gcloud organizations add-iam-policy-binding $ORG_ID \
       --member="serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
       --role='roles/securitycenter.admin'
     ```
@@ -49,13 +49,13 @@ Center findings to BigQuery.
 1.  Make an SCC dataset.
 
     ```console
-    $ bq mk scc
+    bq mk scc
     ```
 
 1.  Make a table for the finding logs.
 
     ```console
-    $ bq mk --time_partitioning_field eventTime --table scc.findings_log schema.json
+    bq mk --time_partitioning_field eventTime --table scc.findings_log schema.json
     ```
 
 ### Configure the Pub/Sub Topic
@@ -63,25 +63,25 @@ Center findings to BigQuery.
 1.  Create the topic where all the findings will be published.
 
     ```console
-    $ gcloud pubsub topics create scc-findings-topic
-    $ export TOPIC=projects/$PROJECT_ID/topics/scc-findings-topic
+    gcloud pubsub topics create scc-findings-topic
+    export TOPIC=projects/$PROJECT_ID/topics/scc-findings-topic
     ```
 
 1.  Configure SCC to publish notifications to our topic.
 
     ```console
-    $ gcloud scc notifications create scc-findings-notify \
+    gcloud scc notifications create scc-findings-notify \
       --pubsub-topic $TOPIC --organization $ORG_ID
     ```
 
 ### Publish the Cloud Function
 
-1.  Deploy the `publish_findings` cloud function. If you have not enabled Cloud Build 
+1.  Deploy the `publish_findings` cloud function. If you have not enabled Cloud Build
     API, then this command may fail. Follow the link in the error message to enable it
     and then try again.
 
     ```console
-    $ gcloud functions deploy publish_findings \
+    gcloud functions deploy publish_findings \
       --service-account="$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
       --source=publish_findings \
       --trigger-topic=scc-findings-topic \
@@ -95,7 +95,7 @@ Center findings to BigQuery.
 1.  Create a view for the current state of the world.
 
     ```console
-    $ bq mk \
+    bq mk \
       --use_legacy_sql=false \
       --view \
       'SELECT
