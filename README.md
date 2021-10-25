@@ -10,7 +10,7 @@ Center findings to BigQuery.
 1.  Set the org and project IDs. The selected project is where the BigQuery tables will
     be created.
 
-    ```console
+    ```shell
     export ORG_ID=<your org id>
     export PROJECT_ID=<your project id>
     gcloud config set project $PROJECT_ID
