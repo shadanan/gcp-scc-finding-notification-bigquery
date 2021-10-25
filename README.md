@@ -18,7 +18,7 @@ Center findings to BigQuery.
 
 1.  Create the service account.
 
-    ```console
+    ```shell
     export SERVICE_ACCOUNT=scc-findings-to-bigquery-sa
     gcloud iam service-accounts create $SERVICE_ACCOUNT \
       --display-name "Service Account for Replicating SCC Findings to BigQuery" \
@@ -27,7 +27,7 @@ Center findings to BigQuery.
 
 1.  Grant the service account BigQuery Data Owner and Job User on the project.
 
-    ```console
+    ```shell
     gcloud projects add-iam-policy-binding $PROJECT_ID \
       --member="serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
       --role='roles/bigquery.jobUser'
@@ -38,7 +38,7 @@ Center findings to BigQuery.
 
 1.  Grant the service account Security Center Admin on the org.
 
-    ```console
+    ```shell
     gcloud organizations add-iam-policy-binding $ORG_ID \
       --member="serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
       --role='roles/securitycenter.admin'
@@ -48,13 +48,13 @@ Center findings to BigQuery.
 
 1.  Make an SCC dataset.
 
-    ```console
+    ```shell
     bq mk scc
     ```
 
 1.  Make a table for the finding logs.
 
-    ```console
+    ```shell
     bq mk --time_partitioning_field eventTime --table scc.findings_log schema.json
     ```
 
@@ -62,14 +62,14 @@ Center findings to BigQuery.
 
 1.  Create the topic where all the findings will be published.
 
-    ```console
+    ```shell
     gcloud pubsub topics create scc-findings-topic
     export TOPIC=projects/$PROJECT_ID/topics/scc-findings-topic
     ```
 
 1.  Configure SCC to publish notifications to our topic.
 
-    ```console
+    ```shell
     gcloud scc notifications create scc-findings-notify \
       --pubsub-topic $TOPIC --organization $ORG_ID
     ```
@@ -80,7 +80,7 @@ Center findings to BigQuery.
     API, then this command may fail. Follow the link in the error message to enable it
     and then try again.
 
-    ```console
+    ```shell
     gcloud functions deploy publish_findings \
       --service-account="$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
       --source=publish_findings \
@@ -94,7 +94,7 @@ Center findings to BigQuery.
 
 1.  Create a view for the current state of the world.
 
-    ```console
+    ```shell
     bq mk \
       --use_legacy_sql=false \
       --view \
